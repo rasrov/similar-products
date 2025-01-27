@@ -1,7 +1,6 @@
 package com.rasrov.similarproducts.usecase;
 
 import com.rasrov.similarproducts.domain.ProductDetail;
-import com.rasrov.similarproducts.ports.FetchProductPort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class FetchProductUseCase implements FetchProductPort {
+public class FetchProductUseCase {
 
     private final MockApiUseCase mockApiUseCase;
 
@@ -17,7 +16,6 @@ public class FetchProductUseCase implements FetchProductPort {
         this.mockApiUseCase = mockApiUseCase;
     }
 
-    @Override
     public List<ProductDetail> similarProducts(final Integer productId) {
         return productDetailResponseList(
                 Objects.requireNonNull(mockApiUseCase.similarIds(productId))
