@@ -17,7 +17,7 @@
 
 	<modules>
 		<module>application</module>
-		<module>domain</module>
+		<module>api-client</module>
 		<module>infrastructure</module>
 	</modules>
 
@@ -34,7 +34,7 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>domian</artifactId>
+				<artifactId>api-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
