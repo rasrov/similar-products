@@ -51,6 +51,6 @@ public class MockApiClient implements MockApiClientPort {
 
     private Mono<ProductDetail> fallbackProductDetail(final Integer productIds, final Throwable throwable) {
         System.out.printf("Fallback error handled %s", throwable.getMessage());
-        return Mono.just(new ProductDetail("-1", "fallback", 0.0, false));
+        return Mono.just(new ProductDetail("0", "Example name", 10.0, false));
     }
 }

@@ -21,8 +21,8 @@ public class WebClientConfiguration {
     @Bean
     public WebClient mockApiWebClient() {
         final HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500)
-                .responseTimeout(Duration.ofMillis(500));
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 6000)
+                .responseTimeout(Duration.ofMillis(6000));
 
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))

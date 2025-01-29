@@ -4,6 +4,7 @@ import com.rasrov.similarproducts.domain.ProductDetail;
 import com.rasrov.similarproducts.domain.ProductDetailDto;
 import com.rasrov.similarproducts.ports.FetchProductPort;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,9 +27,10 @@ public class FetchProductUseCase implements FetchProductPort {
     }
 
     private List<ProductDetailDto> productDetailResponseList(final Set<Integer> similarProductsId) {
-        return similarProductsId.stream()
-                .map(productId -> buildProductDetailDto(Objects.requireNonNull(mockApiUseCase.productDetail(productId).block())))
-                .toList();
+        return Flux.fromIterable(similarProductsId)
+                .flatMap(mockApiUseCase::productDetail)
+                .map(productDetail -> buildProductDetailDto(Objects.requireNonNull(productDetail)))
+                .collectList().block();
     }
 
     private ProductDetailDto buildProductDetailDto(final ProductDetail productDetail) {
