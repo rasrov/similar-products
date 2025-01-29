@@ -2,8 +2,9 @@ package com.rasrov.similarproducts.usecase;
 
 import com.rasrov.similarproducts.domain.ProductDetail;
 import com.rasrov.similarproducts.ports.MockApiClientPort;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
@@ -16,23 +17,14 @@ public class MockApiUseCase {
         this.mockApiClientPort = mockApiClientPort;
     }
 
-    @CircuitBreaker(name = "externalService", fallbackMethod = "fallbackSimilarIds")
-    public Set<Integer> similarIds(final Integer productId) {
-        return mockApiClientPort.similarIds(productId).block();
+    @Cacheable("similarIds")
+    public Mono<Set<Integer>> similarIds(final Integer productId) {
+        return mockApiClientPort.similarIds(productId);
     }
 
-    @CircuitBreaker(name = "externalService", fallbackMethod = "fallbackProductDetail")
-    public ProductDetail productDetail(final Integer productId) {
-        return mockApiClientPort.productDetail(productId).block();
+    @Cacheable("productDetail")
+    public Mono<ProductDetail> productDetail(final Integer productId) {
+        return mockApiClientPort.productDetail(productId);
     }
-
-    private String fallbackSimilarIds(final Throwable throwable) {
-        return String.format("Error calling external API (similar ids): %s", throwable.getMessage());
-    }
-
-    private String fallbackProductDetail(final Throwable throwable) {
-        return String.format("Error calling external API (product detail): %s", throwable.getMessage());
-    }
-
 
 }

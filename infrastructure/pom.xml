@@ -11,4 +11,18 @@
 
     <artifactId>infrastructure</artifactId>
 
+    <dependencies>
+        <!-- MODULES -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>application</artifactId>
+        </dependency>
+
+        <!-- CORE -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

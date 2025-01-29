@@ -1,0 +1,32 @@
+server:
+  port: 5000
+
+mock-api:
+  protocol: http
+  domain: localhost
+  port: 3001
+  resource: product
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 60s
+        failureRateThreshold: 50
+
+cache:
+  duration: 360
+  maxSize: 100

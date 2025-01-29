@@ -16,8 +16,8 @@
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
-		<module>application</module>
 		<module>api-client</module>
+		<module>application</module>
 		<module>infrastructure</module>
 	</modules>
 
@@ -29,12 +29,12 @@
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>application</artifactId>
+				<artifactId>api-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>api-client</artifactId>
+				<artifactId>application</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
