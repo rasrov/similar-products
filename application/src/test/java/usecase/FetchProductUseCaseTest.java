@@ -2,8 +2,8 @@ package usecase;
 
 import com.rasrov.similarproducts.domain.ProductDetail;
 import com.rasrov.similarproducts.domain.ProductDetailDto;
+import com.rasrov.similarproducts.ports.MockApiClientPort;
 import com.rasrov.similarproducts.usecase.FetchProductUseCase;
-import com.rasrov.similarproducts.usecase.MockApiUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +28,17 @@ public class FetchProductUseCaseTest {
     private FetchProductUseCase fetchProductUseCase;
 
     @MockitoBean
-    private MockApiUseCase mockApiUseCase;
+    private MockApiClientPort mockApiClientPort;
 
     @Test
     void fetch_product_should_be_set_properly() {
         assertThat(fetchProductUseCase).isNotNull();
-        assertThat(mockApiUseCase).isNotNull();
+        assertThat(mockApiClientPort).isNotNull();
     }
 
     @Test
     void should_return_empty_similar_products_when_data_not_found() {
-        given(mockApiUseCase.similarIds(eq(PRODUCT_ID))).willReturn(Mono.just(Set.of()));
+        given(mockApiClientPort.similarIds(eq(PRODUCT_ID))).willReturn(Mono.just(Set.of()));
 
         var similarProduct = fetchProductUseCase.similarProducts(PRODUCT_ID);
         assertThat(similarProduct).isNotNull();
@@ -48,8 +48,8 @@ public class FetchProductUseCaseTest {
     @Test
     void should_return_similar_products() {
         var product = 10;
-        given(mockApiUseCase.similarIds(eq(PRODUCT_ID))).willReturn(Mono.just(Set.of(product)));
-        given(mockApiUseCase.productDetail(eq(product))).willReturn(Mono.just(new ProductDetail(product, "name", 0.0, false, null)));
+        given(mockApiClientPort.similarIds(eq(PRODUCT_ID))).willReturn(Mono.just(Set.of(product)));
+        given(mockApiClientPort.productDetail(eq(product))).willReturn(Mono.just(new ProductDetail(product, "name", 0.0, false, null)));
 
         var similarProduct = fetchProductUseCase.similarProducts(PRODUCT_ID);
         assertThat(similarProduct).isNotNull();

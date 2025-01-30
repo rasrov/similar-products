@@ -2,7 +2,6 @@ package com.rasrov.similarproducts.client;
 
 import com.rasrov.similarproducts.config.WebClientConfiguration;
 import com.rasrov.similarproducts.domain.ProductDetail;
-import com.rasrov.similarproducts.exception.ExternalServiceException;
 import com.rasrov.similarproducts.ports.MockApiClientPort;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
@@ -31,10 +30,7 @@ public class MockApiClient implements MockApiClientPort {
                 .uri(String.format("/%s/similarids", productId))
                 .retrieve()
                 .bodyToFlux(Integer.class)
-                .collect(Collectors.toSet())
-                .doOnError(ex -> {
-                    throw new ExternalServiceException(String.format("External service error %s", ex.getMessage()));
-                });
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -43,10 +39,7 @@ public class MockApiClient implements MockApiClientPort {
         return webClientConfiguration.mockApiWebClient().get()
                 .uri(String.format("/%s", productId))
                 .retrieve()
-                .bodyToMono(ProductDetail.class)
-                .doOnError(ex -> {
-                    throw new ExternalServiceException(String.format("External service error %s", ex.getMessage()));
-                });
+                .bodyToMono(ProductDetail.class);
     }
 
     private Mono<Set<Integer>> fallbackSimilarIds(final Integer productId, final Throwable throwable) {
@@ -56,6 +49,6 @@ public class MockApiClient implements MockApiClientPort {
 
     private Mono<ProductDetail> fallbackProductDetail(final Integer productId, final Throwable throwable) {
         log.error("Fallback product detail error handled {}", throwable.getMessage());
-        return Mono.just(new ProductDetail(productId, null, null, null, throwable.getMessage()));
+        return Mono.just(new ProductDetail(productId, null, null, null, String.format("%s: %s", throwable.getCause(), throwable.getMessage())));
     }
 }
