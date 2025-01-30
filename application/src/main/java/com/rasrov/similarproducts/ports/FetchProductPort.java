@@ -1,11 +1,9 @@
 package com.rasrov.similarproducts.ports;
 
-import com.rasrov.similarproducts.domain.ProductDetailDto;
-
-import java.util.List;
+import com.rasrov.similarproducts.domain.SimilarProductsDto;
 
 public interface FetchProductPort {
 
-    List<ProductDetailDto> similarProducts(Integer productId);
+    SimilarProductsDto similarProducts(Integer productId);
 
 }

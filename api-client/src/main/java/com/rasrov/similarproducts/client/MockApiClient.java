@@ -4,6 +4,8 @@ import com.rasrov.similarproducts.config.WebClientConfiguration;
 import com.rasrov.similarproducts.domain.ProductDetail;
 import com.rasrov.similarproducts.ports.MockApiClientPort;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 @Service
 public class MockApiClient implements MockApiClientPort {
 
+    private static final Logger log = LoggerFactory.getLogger(MockApiClient.class);
+
     private final WebClientConfiguration webClientConfiguration;
 
     public MockApiClient(WebClientConfiguration webClientConfiguration) {
@@ -20,7 +24,6 @@ public class MockApiClient implements MockApiClientPort {
     }
 
     @Override
-    @CircuitBreaker(name = "mockService", fallbackMethod = "fallbackSimilarIds")
     public Mono<Set<Integer>> similarIds(Integer productId) {
         return webClientConfiguration.mockApiWebClient().get()
                 .uri(String.format("/%s/similarids", productId))
@@ -44,13 +47,8 @@ public class MockApiClient implements MockApiClientPort {
                 });
     }
 
-    private Mono<Set<Integer>> fallbackSimilarIds(final Integer productIds, final Throwable throwable) {
-        System.out.printf("Fallback error handled %s", throwable.getMessage());
-        return Mono.just(Set.of());
-    }
-
     private Mono<ProductDetail> fallbackProductDetail(final Integer productIds, final Throwable throwable) {
-        System.out.printf("Fallback error handled %s", throwable.getMessage());
-        return Mono.just(new ProductDetail("0", "Example name", 10.0, false));
+        log.error("Fallback product detail error handled {}", throwable.getMessage());
+        return Mono.just(new ProductDetail(null, null, null, null, throwable.getMessage()));
     }
 }
