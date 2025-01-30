@@ -3,7 +3,6 @@ package com.rasrov.similarproducts.usecase;
 import com.rasrov.similarproducts.domain.ProductDetail;
 import com.rasrov.similarproducts.domain.ProductDetailDto;
 import com.rasrov.similarproducts.domain.SimilarProductsDto;
-import com.rasrov.similarproducts.exception.ApplicationException;
 import com.rasrov.similarproducts.ports.FetchProductPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,27 +28,17 @@ public class FetchProductUseCase implements FetchProductPort {
     @Override
     @Cacheable("similarProducts")
     public SimilarProductsDto similarProducts(final Integer productId) {
-        try {
-            Set<Integer> similarIds = mockApiUseCase.similarIds(productId).block();
+            final Set<Integer> similarIds = mockApiUseCase.similarIds(productId).block();
 
             return new SimilarProductsDto(productDetailResponseList(
                     Objects.requireNonNull(similarIds)), null);
-        } catch (Exception e) {
-            log.error("Error trying to request for similar ids: {}", e.getMessage());
-            return new SimilarProductsDto(List.of(), e.getMessage());
-        }
     }
 
     private List<ProductDetailDto> productDetailResponseList(final Set<Integer> similarProductsId) {
-        try {
-            return Flux.fromIterable(similarProductsId)
-                    .flatMap(mockApiUseCase::productDetail)
-                    .map(productDetail -> buildProductDetailDto(Objects.requireNonNull(productDetail)))
-                    .collectList().block();
-        } catch (Exception e) {
-            log.error("Error trying to request for product detail: {}", e.getMessage());
-            throw new ApplicationException(e.getMessage());
-        }
+        return Flux.fromIterable(similarProductsId)
+                .flatMap(mockApiUseCase::productDetail)
+                .map(productDetail -> buildProductDetailDto(Objects.requireNonNull(productDetail)))
+                .collectList().block();
     }
 
     private ProductDetailDto buildProductDetailDto(final ProductDetail productDetail) {
