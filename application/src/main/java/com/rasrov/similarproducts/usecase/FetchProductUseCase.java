@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -37,10 +38,13 @@ public class FetchProductUseCase implements FetchProductPort {
     }
 
     private List<ProductDetailDto> productDetailResponseList(final Set<Integer> similarProductsId) {
-        return Flux.fromIterable(similarProductsId)
-                .flatMap(this::getProductDetail)
-                .map(productDetail -> buildProductDetailDto(Objects.requireNonNull(productDetail)))
-                .collectList().block();
+        return Objects.requireNonNull(Flux.fromIterable(similarProductsId)
+                        .flatMap(this::getProductDetail)
+                        .map(productDetail -> buildProductDetailDto(Objects.requireNonNull(productDetail)))
+                        .collectList().block())
+                .stream()
+                .sorted(Comparator.comparing(ProductDetailDto::id))
+                .toList();
     }
 
     private Mono<ProductDetail> getProductDetail(final Integer productId) {
