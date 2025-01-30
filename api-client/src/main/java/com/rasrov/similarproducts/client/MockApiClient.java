@@ -24,7 +24,6 @@ public class MockApiClient implements MockApiClientPort {
     }
 
     @Override
-    @CircuitBreaker(name = "mockService", fallbackMethod = "fallbackSimilarIds")
     public Mono<Set<Integer>> similarIds(final Integer productId) {
         return webClientConfiguration.mockApiWebClient().get()
                 .uri(String.format("/%s/similarids", productId))
@@ -40,11 +39,6 @@ public class MockApiClient implements MockApiClientPort {
                 .uri(String.format("/%s", productId))
                 .retrieve()
                 .bodyToMono(ProductDetail.class);
-    }
-
-    private Mono<Set<Integer>> fallbackSimilarIds(final Integer productId, final Throwable throwable) {
-        log.error("Fallback similar ids error handled {}", throwable.getMessage());
-        return Mono.just(Set.of());
     }
 
     private Mono<ProductDetail> fallbackProductDetail(final Integer productId, final Throwable throwable) {
