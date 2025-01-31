@@ -41,7 +41,7 @@ public class MockApiClient implements MockApiClientPort {
                 .bodyToMono(ProductDetail.class);
     }
 
-    private Mono<ProductDetail> fallbackProductDetail(final Integer productId, final Throwable throwable) {
+    public Mono<ProductDetail> fallbackProductDetail(final Integer productId, final Throwable throwable) {
         log.error("Fallback product detail error handled {}", throwable.getMessage());
         return Mono.just(new ProductDetail(productId, null, null, null, String.format("%s: %s", throwable.getCause(), throwable.getMessage())));
     }
